@@ -30,11 +30,16 @@
                 <span>TechNova</span>
             </a>
 
-            <button class="menu-btn" id="menuBtn">
+            <button
+                class="menu-btn"
+                id="menuBtn"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="navMenu">
                 ☰
             </button>
 
-            <nav id="navMenu">
+            <nav id="navMenu" aria-label="Main navigation">
 
                 <a href="#/" data-link class="nav-link">
                     Home
@@ -54,7 +59,10 @@
 
             </nav>
 
-            <button id="themeToggle" class="theme-btn">
+            <button
+                id="themeToggle"
+                class="theme-btn"
+                aria-label="Switch to dark mode">
                 🌙
             </button>
 
@@ -83,7 +91,7 @@
 
     </footer>
 
-    <div id="toast" class="toast">
+    <div id="toast" class="toast" role="status" aria-live="polite">
         Message sent successfully!
     </div>
 

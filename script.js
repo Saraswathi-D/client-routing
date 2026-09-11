@@ -419,7 +419,7 @@ const pages = {
 
                     <div class="form-group">
 
-                        <label>
+                        <label for="name">
                             Name
                         </label>
 
@@ -434,7 +434,7 @@ const pages = {
 
                     <div class="form-group">
 
-                        <label>
+                        <label for="email">
                             Email
                         </label>
 
@@ -449,7 +449,7 @@ const pages = {
 
                     <div class="form-group">
 
-                        <label>
+                        <label for="message">
                             Message
                         </label>
 
@@ -544,6 +544,8 @@ function router() {
     updateActiveLink(path);
 
     navMenu.classList.remove("show");
+    menuBtn.setAttribute("aria-expanded", "false");
+    menuBtn.setAttribute("aria-label", "Open navigation menu");
 
     setupContactForm();
     setupStatistics();
@@ -576,6 +578,7 @@ function updateActiveLink(path) {
     links.forEach(link => {
 
         link.classList.remove("active");
+        link.removeAttribute("aria-current");
 
         const href = link
             .getAttribute("href")
@@ -587,6 +590,7 @@ function updateActiveLink(path) {
         ) {
 
             link.classList.add("active");
+            link.setAttribute("aria-current", "page");
 
         }
 
@@ -594,7 +598,24 @@ function updateActiveLink(path) {
 }
 menuBtn.addEventListener("click", function () {
 
-    navMenu.classList.toggle("show");
+    const isOpen = navMenu.classList.toggle("show");
+
+    menuBtn.setAttribute("aria-expanded", String(isOpen));
+    menuBtn.setAttribute(
+        "aria-label",
+        isOpen ? "Close navigation menu" : "Open navigation menu"
+    );
+
+});
+
+document.addEventListener("keydown", function (event) {
+
+    if (event.key === "Escape" && navMenu.classList.contains("show")) {
+        navMenu.classList.remove("show");
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.setAttribute("aria-label", "Open navigation menu");
+        menuBtn.focus();
+    }
 
 });
 
@@ -714,6 +735,15 @@ function showToast(message, type = "success") {
 const themeToggle =
     document.getElementById("themeToggle");
 
+function updateThemeToggleLabel() {
+    const isDark = document.body.classList.contains("dark");
+
+    themeToggle.setAttribute(
+        "aria-label",
+        isDark ? "Switch to light mode" : "Switch to dark mode"
+    );
+}
+
 themeToggle.addEventListener("click", function () {
 
     document.body.classList.toggle("dark");
@@ -732,6 +762,8 @@ themeToggle.addEventListener("click", function () {
 
     }
 
+    updateThemeToggleLabel();
+
 });
 
 
@@ -745,6 +777,8 @@ if (savedTheme === "dark") {
     themeToggle.textContent = "☀️";
 
 }
+
+updateThemeToggleLabel();
 
 const backToTop = document.getElementById("backToTop");
 const scrollProgress = document.getElementById("scrollProgress");

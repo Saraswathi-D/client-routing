@@ -129,6 +129,16 @@ nav {
     color: #6366f1;
 }
 
+.nav-link:focus-visible,
+.logo:focus-visible,
+.btn:focus-visible,
+.theme-btn:focus-visible,
+.menu-btn:focus-visible,
+.back-to-top:focus-visible {
+    outline: 3px solid #06b6d4;
+    outline-offset: 3px;
+}
+
 .nav-link.active {
     color: #6366f1;
     background: rgba(99, 102, 241, 0.12);
@@ -430,6 +440,12 @@ body.dark .form-group textarea {
 .form-group textarea:focus {
     border-color: #6366f1;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group input:focus-visible,
+.form-group textarea:focus-visible {
+    outline: 3px solid #06b6d4;
+    outline-offset: 2px;
 }
 
 textarea {
