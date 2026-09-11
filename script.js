@@ -215,22 +215,22 @@ const pages = {
             <div class="stats">
 
                 <div class="stat">
-                    <h2>50+</h2>
+                    <h2><span class="stat-number" data-target="50">0</span>+</h2>
                     <p>Projects</p>
                 </div>
 
                 <div class="stat">
-                    <h2>25+</h2>
+                    <h2><span class="stat-number" data-target="25">0</span>+</h2>
                     <p>Clients</p>
                 </div>
 
                 <div class="stat">
-                    <h2>10+</h2>
+                    <h2><span class="stat-number" data-target="10">0</span>+</h2>
                     <p>Technologies</p>
                 </div>
 
                 <div class="stat">
-                    <h2>5+</h2>
+                    <h2><span class="stat-number" data-target="5">0</span>+</h2>
                     <p>Years Experience</p>
                 </div>
 
@@ -456,8 +456,13 @@ const pages = {
                         <textarea
                             id="message"
                             placeholder="Write your message..."
+                            maxlength="300"
                             required
                         ></textarea>
+
+                        <div id="characterCount" class="character-count">
+                            0 / 300 characters
+                        </div>
 
                     </div>
 
@@ -468,6 +473,26 @@ const pages = {
                     </button>
 
                 </form>
+
+            </div>
+
+        </section>
+    `,
+
+    notFound: `
+        <section class="page-animation not-found-page">
+
+            <div class="page-header">
+
+                <h1>404</h1>
+
+                <h2>Page Not Found</h2>
+
+                <p>The page you are looking for doesn't exist.</p>
+
+                <a href="#/" data-link class="btn btn-primary">
+                    Back to Home
+                </a>
 
             </div>
 
@@ -505,8 +530,7 @@ function router() {
             break;
 
         default:
-            page = "home";
-            path = "/";
+            page = "notFound";
     }
 
     if (path === "/contact") {
@@ -522,6 +546,7 @@ function router() {
     navMenu.classList.remove("show");
 
     setupContactForm();
+    setupStatistics();
 
     window.scrollTo(0, 0);
 }
@@ -581,6 +606,13 @@ function setupContactForm() {
         return;
     }
 
+    const messageField = document.getElementById("message");
+    const characterCount = document.getElementById("characterCount");
+
+    messageField.addEventListener("input", function () {
+        characterCount.textContent = `${messageField.value.length} / 300 characters`;
+    });
+
     form.addEventListener("submit", function (event) {
 
         event.preventDefault();
@@ -612,6 +644,51 @@ function setupContactForm() {
 
     });
 
+}
+
+function setupStatistics() {
+
+    const statistics = document.querySelectorAll(".stat-number");
+
+    if (!statistics.length) {
+        return;
+    }
+
+    const animateStatistics = () => {
+        statistics.forEach(statistic => {
+            const target = Number(statistic.dataset.target);
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+                statistic.textContent = Math.round(target * easedProgress);
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        });
+    };
+
+    const observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+            animateStatistics();
+            observer.disconnect();
+        }
+    }, { threshold: 0.2 });
+
+    const firstStatistic = statistics[0].getBoundingClientRect();
+
+    if (firstStatistic.top < window.innerHeight && firstStatistic.bottom > 0) {
+        animateStatistics();
+    } else {
+        observer.observe(statistics[0]);
+    }
 }
 
 function showToast(message, type = "success") {
@@ -668,5 +745,31 @@ if (savedTheme === "dark") {
     themeToggle.textContent = "☀️";
 
 }
+
+const backToTop = document.getElementById("backToTop");
+const scrollProgress = document.getElementById("scrollProgress");
+let scrollUpdatePending = false;
+
+function updateScrollControls() {
+    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollableHeight > 0
+        ? (window.scrollY / scrollableHeight) * 100
+        : 0;
+
+    scrollProgress.style.width = `${progress}%`;
+    backToTop.classList.toggle("show", window.scrollY >= 300);
+    scrollUpdatePending = false;
+}
+
+window.addEventListener("scroll", function () {
+    if (!scrollUpdatePending) {
+        scrollUpdatePending = true;
+        requestAnimationFrame(updateScrollControls);
+    }
+}, { passive: true });
+
+backToTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
 
 router();
