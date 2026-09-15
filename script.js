@@ -427,6 +427,7 @@ const pages = {
                             type="text"
                             id="name"
                             placeholder="Enter your name"
+                            aria-invalid="false"
                             required
                         >
 
@@ -442,6 +443,7 @@ const pages = {
                             type="email"
                             id="email"
                             placeholder="Enter your email"
+                            aria-invalid="false"
                             required
                         >
 
@@ -457,10 +459,12 @@ const pages = {
                             id="message"
                             placeholder="Write your message..."
                             maxlength="300"
+                            aria-invalid="false"
+                            aria-describedby="characterCount"
                             required
                         ></textarea>
 
-                        <div id="characterCount" class="character-count">
+                        <div id="characterCount" class="character-count" aria-live="polite">
                             0 / 300 characters
                         </div>
 
@@ -504,6 +508,11 @@ function router() {
 
     let hash = window.location.hash;
     let path = hash.replace("#", "");
+
+    if (path === "app") {
+        app.focus();
+        return;
+    }
 
     if (path === "" || path === "/") {
         path = "/";
@@ -629,9 +638,20 @@ function setupContactForm() {
 
     const messageField = document.getElementById("message");
     const characterCount = document.getElementById("characterCount");
+    const fields = form.querySelectorAll("input, textarea");
 
     messageField.addEventListener("input", function () {
         characterCount.textContent = `${messageField.value.length} / 300 characters`;
+    });
+
+    fields.forEach(field => {
+        field.addEventListener("input", function () {
+            field.setAttribute("aria-invalid", "false");
+        });
+
+        field.addEventListener("invalid", function () {
+            field.setAttribute("aria-invalid", "true");
+        });
     });
 
     form.addEventListener("submit", function (event) {
@@ -678,6 +698,12 @@ function setupStatistics() {
     const animateStatistics = () => {
         statistics.forEach(statistic => {
             const target = Number(statistic.dataset.target);
+
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                statistic.textContent = target;
+                return;
+            }
+
             const duration = 1000;
             const startTime = performance.now();
 

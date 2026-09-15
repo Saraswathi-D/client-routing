@@ -8,6 +8,25 @@ html {
     scroll-behavior: smooth;
 }
 
+.skip-link {
+    position: fixed;
+    top: -100px;
+    left: 20px;
+    z-index: 2100;
+    padding: 10px 15px;
+    color: white;
+    background: #6366f1;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.skip-link:focus-visible {
+    top: 20px;
+    outline: 3px solid #06b6d4;
+    outline-offset: 3px;
+}
+
 .scroll-progress {
     position: fixed;
     top: 0;
@@ -448,6 +467,11 @@ body.dark .form-group textarea {
     outline-offset: 2px;
 }
 
+.form-group input[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
 textarea {
     min-height: 140px;
     resize: vertical;
@@ -539,6 +563,27 @@ textarea {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    .scroll-progress,
+    body,
+    .nav-link,
+    .theme-btn,
+    .btn,
+    .card,
+    .hero-card,
+    .toast,
+    .back-to-top,
+    .page-animation {
+        animation: none;
+        transition: none;
     }
 }
 
